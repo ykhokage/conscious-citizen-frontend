@@ -21,25 +21,30 @@ export default function Register() {
   const [err, setErr] = useState("");
 
   async function submit(e) {
-    e.preventDefault();
-    setErr("");
+  e.preventDefault();
+  setErr("");
 
-    if (form.password !== form.confirmPassword) {
-      setErr("Пароли не совпадают");
-      return;
-    }
-    if (!form.agreeRules) {
-      setErr("Нужно согласиться с правилами");
-      return;
-    }
-
-    try {
-      await register(form);
-      nav("/profile");
-    } catch (e2) {
-      setErr(e2?.response?.data?.message || "Не удалось зарегистрироваться");
-    }
+  if (form.password !== form.confirmPassword) {
+    setErr("Пароли не совпадают");
+    return;
   }
+  if (!form.agreeRules) {
+    setErr("Нужно согласиться с правилами");
+    return;
+  }
+
+  try {
+    const data = await register(form);
+
+    // ✅ чтобы на verify-email уже был email
+    localStorage.setItem("pendingEmail", form.email.trim().toLowerCase());
+
+    // ✅ сразу на подтверждение
+    nav("/verify-email");
+  } catch (e2) {
+    setErr(e2?.response?.data?.message || "Не удалось зарегистрироваться");
+  }
+}
 
   return (
     <div className="max-w-md mx-auto">

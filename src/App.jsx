@@ -5,12 +5,14 @@ import AdminRoute from "./components/AdminRoute";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import VerifyEmail from "./pages/VerifyEmail";
 import ResetPassword from "./pages/ResetPassword";
 
 import Categories from "./pages/Categories";
 import MapStep from "./pages/MapStep";
 import IncidentCreate from "./pages/IncidentCreate";
 import IncidentView from "./pages/IncidentView";
+import IncidentEdit from "./pages/IncidentEdit"; // ✅ НОВОЕ
 import MyIncidents from "./pages/MyIncidents";
 import AllIncidents from "./pages/AllIncidents";
 import Notifications from "./pages/Notifications";
@@ -27,6 +29,7 @@ export default function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route
@@ -50,6 +53,15 @@ export default function App() {
           element={
             <ProtectedRoute>
               <IncidentCreate />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/incident/edit/:id"
+          element={
+            <ProtectedRoute>
+              <IncidentEdit />
             </ProtectedRoute>
           }
         />

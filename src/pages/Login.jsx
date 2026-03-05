@@ -14,11 +14,26 @@ export default function Login() {
   async function submit(e) {
     e.preventDefault();
     setErr("");
+
     try {
       await login(form.login, form.password);
       nav("/categories");
     } catch (e2) {
-      setErr(e2?.response?.data?.message || "Не удалось войти");
+      const status = e2?.response?.status;
+      const message = e2?.response?.data?.message || "Не удалось войти";
+
+      // ✅ если сервер говорит "почта не подтверждена" — ведём на /verify-email
+      if (status === 403) {
+        // если пользователь ввёл email вместо логина — сохраним его
+        const v = String(form.login || "").trim();
+        if (v.includes("@")) {
+          localStorage.setItem("pendingEmail", v.toLowerCase());
+        }
+        nav("/verify-email");
+        return;
+      }
+
+      setErr(message);
     }
   }
 
@@ -27,7 +42,7 @@ export default function Login() {
       <Card title="Вход">
         <form onSubmit={submit} className="space-y-3">
           <Field
-            label="Логин"
+            label="Логин (или email)"
             value={form.login}
             onChange={(e) => setForm({ ...form, login: e.target.value })}
           />
@@ -37,7 +52,9 @@ export default function Login() {
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
           />
+
           {err && <div className="text-sm text-red-400">{err}</div>}
+
           <Button type="submit" className="w-full">
             Войти
           </Button>
