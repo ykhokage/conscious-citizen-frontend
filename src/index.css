@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --theme-bg: #020202;
+  --theme-fg: #f5f5f5;
+  --muted-fg: rgba(255, 255, 255, 0.68);
+  --frame-border: rgba(255, 255, 255, 0.1);
+  --grid-line: rgba(255, 255, 255, 0.045);
+  --panel-bg: rgba(255, 255, 255, 0.04);
+  --panel-border: rgba(255, 255, 255, 0.1);
+  --paper-bg: #f2f1ed;
+  --paper-fg: #090909;
+  --paper-border: rgba(9, 9, 9, 0.1);
+  --field-bg: #ffffff;
+}
+
+html.theme-light {
+  color-scheme: light;
+  --theme-bg: #ebe8df;
+  --theme-fg: #101010;
+  --muted-fg: rgba(16, 16, 16, 0.68);
+  --frame-border: rgba(16, 16, 16, 0.1);
+  --grid-line: rgba(0, 0, 0, 0.06);
+  --panel-bg: rgba(255, 255, 255, 0.72);
+  --panel-border: rgba(16, 16, 16, 0.1);
+  --paper-bg: #faf8f2;
+  --paper-fg: #090909;
+  --paper-border: rgba(9, 9, 9, 0.08);
+  --field-bg: #ffffff;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--theme-bg);
+  color: var(--theme-fg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+::selection {
+  background: #f2f2f2;
+  color: #050505;
+}
+
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+.leaflet-container {
+  z-index: 0;
+  font-family: inherit;
+  width: 100%;
+  height: 100%;
+  background: #e3e3e3;
+}
+
+.page-surface {
+  background: var(--theme-bg);
+}
+
+.page-grid {
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.paper {
+  background: var(--paper-bg);
+  color: var(--paper-fg);
+}
+
+@layer components {
+  .app-container {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-kicker {
+    color: var(--muted-fg);
+    @apply text-xs uppercase tracking-[0.28em];
+  }
+
+  .display-title {
+    @apply text-5xl font-extrabold uppercase leading-[0.92] tracking-[0.01em] sm:text-7xl lg:text-[5.8rem];
+  }
+
+  .paper-card {
+    background: var(--paper-bg);
+    color: var(--paper-fg);
+    border-color: var(--paper-border);
+    @apply rounded-[2rem] border p-5 shadow-ink sm:p-7;
+  }
+
+  .muted-copy {
+    color: rgba(9, 9, 9, 0.6);
+    @apply text-sm leading-6 sm:text-base;
+  }
+
+  .dark-panel {
+    background: var(--panel-bg);
+    border-color: var(--panel-border);
+    color: var(--theme-fg);
+    @apply rounded-[2rem] border backdrop-blur;
+  }
+}
+
+
+@keyframes asylum-flicker {
+  0%, 18%, 22%, 63%, 100% { opacity: 0.85; }
+  20%, 21%, 61% { opacity: 0.55; }
+}
+
+.hospital-noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.12), transparent 24%),
+    radial-gradient(circle at 80% 16%, rgba(255,0,0,0.08), transparent 18%),
+    radial-gradient(circle at 50% 80%, rgba(255,255,255,0.04), transparent 28%);
+  mix-blend-mode: screen;
+  filter: blur(18px);
+  animation: asylum-flicker 6.5s steps(1, end) infinite;
+}
+
+.hospital-noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 3px 3px, 4px 4px;
+  opacity: 0.2;
+  mix-blend-mode: overlay;
+}
+
+@keyframes team-spectrum-spin {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.team-link {
+  color: #111;
+  transition: transform 0.25s ease, text-shadow 0.25s ease, background-position 0.25s ease;
+}
+
+.team-link:hover,
+.team-link:focus-visible {
+  transform: translateY(-1px);
+  background-image: conic-gradient(
+    from 0deg,
+    #ff4365,
+    #ffb703,
+    #00f5d4,
+    #3a86ff,
+    #8338ec,
+    #ff4365
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: team-spectrum-spin 1.25s linear infinite;
+}
