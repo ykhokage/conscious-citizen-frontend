@@ -8,7 +8,7 @@ import PageHeader from "../components/PageHeader";
 import { StatusBadge } from "../components/StatusBadge";
 import { categoryLabel, formatDateTime, statusLabel } from "../utils/format";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 export default function IncidentView() {
   const { id } = useParams();
