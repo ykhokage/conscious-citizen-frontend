@@ -19,9 +19,7 @@ async function fallbackReverse(lat, lon) {
     headers: { Accept: "application/json" },
   });
 
-  if (!response.ok) {
-    throw new Error("reverse failed");
-  }
+  if (!response.ok) throw new Error("reverse failed");
 
   const data = await response.json();
   return { address: data?.display_name || "" };
@@ -38,9 +36,7 @@ async function fallbackSearch(query) {
     headers: { Accept: "application/json" },
   });
 
-  if (!response.ok) {
-    throw new Error("search failed");
-  }
+  if (!response.ok) throw new Error("search failed");
 
   const data = await response.json();
   return {
@@ -55,10 +51,10 @@ async function fallbackSearch(query) {
 export default function MapStep() {
   const navigate = useNavigate();
   const category = sessionStorage.getItem("cc_category") || "parking";
+
   const [coords, setCoords] = useState({ lat: null, lon: null });
   const [address, setAddress] = useState("");
   const [manual, setManual] = useState("");
-  const [statusMessage, setStatusMessage] = useState("");
   const [serviceWarning, setServiceWarning] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -67,7 +63,6 @@ export default function MapStep() {
   const canProceed = Boolean(coords.lat && coords.lon && effectiveAddress);
 
   const reverse = useCallback(async (lat, lon) => {
-    setStatusMessage("");
     setServiceWarning("");
 
     try {
@@ -87,14 +82,11 @@ export default function MapStep() {
           setAddress(resolvedAddress);
           return;
         }
-      } catch {
-        // noop, handled below
-      }
+      } catch {}
 
       if (!address.trim() && manual.trim()) {
         setAddress(manual.trim());
       }
-      setStatusMessage("Не удалось определить адрес автоматически. Можете подтвердить вручную.");
     }
   }, [address, manual]);
 
@@ -102,7 +94,6 @@ export default function MapStep() {
     if (!manual.trim()) return;
 
     setBusy(true);
-    setStatusMessage("");
     setServiceWarning("");
 
     try {
@@ -119,7 +110,6 @@ export default function MapStep() {
 
       if (!first) {
         setAddress(manual.trim());
-        setStatusMessage("Точный адрес не найден. Можно продолжить с введённым вручную адресом.");
         return;
       }
 
@@ -129,7 +119,6 @@ export default function MapStep() {
       await reverse(nextCoords.lat, nextCoords.lon);
     } catch {
       setAddress(manual.trim());
-      setStatusMessage("Не удалось найти адрес автоматически. Можно продолжить с введённым вручную адресом.");
     } finally {
       setBusy(false);
     }
@@ -153,7 +142,7 @@ export default function MapStep() {
       <PageHeader
         eyebrow="геометка"
         title="Укажите место"
-        description="Отметьте точку на карте или найдите адрес вручную. Система проверит, обслуживается ли выбранная территория."
+        description="Отметьте точку на карте или найдите адрес вручную."
       />
 
       <div className="grid items-start gap-6 lg:grid-cols-[1.15fr_0.85fr]">
@@ -161,7 +150,7 @@ export default function MapStep() {
           <MapPicker onPick={handlePick} />
         </Card>
 
-        <Card title="Адрес" description="Проверьте автоматически найденный адрес и при необходимости уточните его поиском.">
+        <Card title="Адрес">
           <div className="space-y-4">
             <Field
               label="Выбранный адрес"
@@ -169,6 +158,7 @@ export default function MapStep() {
               onChange={(event) => setAddress(event.target.value)}
               placeholder="Адрес появится после выбора точки"
             />
+
             <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
               <Field
                 label="Поиск адреса"
@@ -183,10 +173,10 @@ export default function MapStep() {
               </div>
             </div>
 
-            {statusMessage && <div className="rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-800">{statusMessage}</div>}
-
-            {!statusMessage && serviceWarning && (
-              <div className="rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-800">{serviceWarning}</div>
+            {serviceWarning && (
+              <div className="rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                {serviceWarning}
+              </div>
             )}
 
             {coords.lat && coords.lon && (
