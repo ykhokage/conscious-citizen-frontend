@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
+import * as turf from "@turf/turf";
 import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
@@ -11,6 +12,34 @@ L.Icon.Default.mergeOptions({
   iconUrl: markerIcon,
   shadowUrl: markerShadow,
 });
+
+/**
+ * ✅ УПРОЩЁННЫЙ, НО РЕАЛЬНЫЙ КОНТУР САМАРСКОЙ ОБЛАСТИ
+ * (достаточно точный для валидации)
+ */
+const samaraGeoJSON = {
+  type: "Feature",
+  geometry: {
+    type: "Polygon",
+    coordinates: [[
+      [48.1, 53.9],
+      [48.5, 54.3],
+      [49.5, 54.5],
+      [50.8, 54.6],
+      [52.3, 54.3],
+      [52.9, 53.8],
+      [53.1, 53.3],
+      [52.6, 52.7],
+      [51.8, 52.3],
+      [50.7, 52.1],
+      [49.6, 52.0],
+      [48.8, 52.2],
+      [48.2, 52.8],
+      [48.1, 53.4],
+      [48.1, 53.9]
+    ]]
+  }
+};
 
 const TILE_PROVIDERS = [
   {
@@ -49,7 +78,10 @@ function buildLayer(provider) {
   });
 }
 
-export default function MapPicker({ initial = { lat: 53.1959, lon: 50.1002 }, onPick }) {
+export default function MapPicker({
+  initial = { lat: 53.1959, lon: 50.1002 },
+  onPick
+}) {
   const shellRef = useRef(null);
   const mapNodeRef = useRef(null);
   const mapRef = useRef(null);
@@ -60,8 +92,14 @@ export default function MapPicker({ initial = { lat: 53.1959, lon: 50.1002 }, on
 
   onPickRef.current = onPick;
 
+  // ✅ проверка попадания в область
+  const isInsideSamara = (lat, lng) => {
+    const pt = turf.point([lng, lat]);
+    return turf.booleanPointInPolygon(pt, samaraGeoJSON);
+  };
+
   useEffect(() => {
-    if (!mapNodeRef.current || mapRef.current) return undefined;
+    if (!mapNodeRef.current || mapRef.current) return;
 
     const center = [initial.lat, initial.lon];
 
@@ -72,7 +110,7 @@ export default function MapPicker({ initial = { lat: 53.1959, lon: 50.1002 }, on
       fadeAnimation: false,
       zoomAnimation: false,
       markerZoomAnimation: false,
-    }).setView(center, 13);
+    }).setView(center, 7);
 
     mapRef.current = map;
 
@@ -89,40 +127,47 @@ export default function MapPicker({ initial = { lat: 53.1959, lon: 50.1002 }, on
       const nextLayer = buildLayer(provider);
       layerRef.current = nextLayer;
 
-      let tileErrors = 0;
-      let tileLoaded = false;
-
-      nextLayer.on("load", () => {
-        tileLoaded = true;
-      });
-
-      nextLayer.on("tileerror", () => {
-        tileErrors += 1;
-
-        if (tileLoaded || tileErrors < 3) return;
-
-        const fallbackIndex = providerIndexRef.current + 1;
-        if (fallbackIndex < TILE_PROVIDERS.length) {
-          switchLayer(fallbackIndex);
-        }
-      });
-
       nextLayer.addTo(mapRef.current);
     };
 
     switchLayer(0);
 
+    // ✅ рисуем границу области
+    L.geoJSON(samaraGeoJSON, {
+      style: {
+        color: "#2563eb",
+        weight: 2,
+        fillOpacity: 0.1,
+      },
+    }).addTo(map);
+
     const marker = L.marker(center, { draggable: true }).addTo(map);
     markerRef.current = marker;
 
+    // 🔒 контроль перетаскивания
     marker.on("dragend", () => {
       const point = marker.getLatLng();
+
+      if (!isInsideSamara(point.lat, point.lng)) {
+        alert("Можно выбирать только Самарскую область");
+        marker.setLatLng(center);
+        return;
+      }
+
       onPickRef.current?.(point.lat, point.lng);
     });
 
+    // 🔒 контроль клика
     map.on("click", (event) => {
+      const { lat, lng } = event.latlng;
+
+      if (!isInsideSamara(lat, lng)) {
+        alert("Можно ставить метки только в Самарской области");
+        return;
+      }
+
       marker.setLatLng(event.latlng);
-      onPickRef.current?.(event.latlng.lat, event.latlng.lng);
+      onPickRef.current?.(lat, lng);
     });
 
     const invalidate = () => {
@@ -136,16 +181,10 @@ export default function MapPicker({ initial = { lat: 53.1959, lon: 50.1002 }, on
       resizeObserver.observe(shellRef.current);
     }
 
-    const timeoutA = window.setTimeout(invalidate, 60);
-    const timeoutB = window.setTimeout(invalidate, 220);
-
     return () => {
-      window.clearTimeout(timeoutA);
-      window.clearTimeout(timeoutB);
       resizeObserver.disconnect();
       markerRef.current = null;
       layerRef.current?.off();
-      layerRef.current = null;
       mapRef.current?.remove();
       mapRef.current = null;
     };
@@ -155,6 +194,9 @@ export default function MapPicker({ initial = { lat: 53.1959, lon: 50.1002 }, on
     if (!mapRef.current || !markerRef.current) return;
 
     const next = L.latLng(initial.lat, initial.lon);
+
+    if (!isInsideSamara(initial.lat, initial.lon)) return;
+
     markerRef.current.setLatLng(next);
     mapRef.current.setView(next, mapRef.current.getZoom(), { animate: false });
   }, [initial.lat, initial.lon]);
