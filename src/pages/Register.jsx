@@ -327,7 +327,7 @@ export default function Register() {
                 </Button>
 
                 <Link to="/login">
-                  <Button type="button" variant="ghost" size="lg">
+                  <Button type="button" size="lg">
                     Уже есть аккаунт
                   </Button>
                 </Link>

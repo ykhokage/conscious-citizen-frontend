@@ -72,7 +72,7 @@ export default function Login() {
                 {busy ? "Входим..." : "Войти"}
               </Button>
               <Link to="/reset-password">
-                <Button type="button" variant="ghost" size="lg">
+                <Button type="button"  size="lg">
                   Забыли пароль?
                 </Button>
               </Link>
