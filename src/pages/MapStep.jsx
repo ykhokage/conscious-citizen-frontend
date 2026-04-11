@@ -55,7 +55,6 @@ export default function MapStep() {
   const [coords, setCoords] = useState({ lat: null, lon: null });
   const [address, setAddress] = useState("");
   const [manual, setManual] = useState("");
-  const [serviceWarning, setServiceWarning] = useState("");
   const [busy, setBusy] = useState(false);
 
   const title = useMemo(() => categoryLabel(category), [category]);
@@ -63,16 +62,10 @@ export default function MapStep() {
   const canProceed = Boolean(coords.lat && coords.lon && effectiveAddress);
 
   const reverse = useCallback(async (lat, lon) => {
-    setServiceWarning("");
-
     try {
       const { data } = await api.get("/api/geo/reverse", { params: { lat, lon } });
       const resolvedAddress = data?.address || "";
       setAddress(resolvedAddress);
-
-      if (data?.inServiceArea === false && data?.message) {
-        setServiceWarning(data.message);
-      }
       return;
     } catch {
       try {
@@ -94,7 +87,6 @@ export default function MapStep() {
     if (!manual.trim()) return;
 
     setBusy(true);
-    setServiceWarning("");
 
     try {
       let data;
@@ -172,12 +164,6 @@ export default function MapStep() {
                 </Button>
               </div>
             </div>
-
-            {serviceWarning && (
-              <div className="rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                {serviceWarning}
-              </div>
-            )}
 
             {coords.lat && coords.lon && (
               <div className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-black/65">
