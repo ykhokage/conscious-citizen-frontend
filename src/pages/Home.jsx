@@ -12,21 +12,23 @@ const features = [
 export default function Home() {
   const { isAuthed } = useAuth();
   const { isLight } = useTheme();
+  const heroShadow = isLight
+    ? "[text-shadow:8px_8px_0_rgba(0,0,0,0.10)]"
+    : "[text-shadow:8px_8px_0_rgba(255,255,255,0.12)]";
 
   return (
-    <div className="app-container pt-10 sm:pt-14 lg:pt-10 xl:pt-12">
-      <section className="grid gap-8 lg:gap-16 xl:gap-20 lg:grid-cols-[minmax(0,1.28fr)_minmax(280px,0.58fr)] lg:items-end">
-        <div className="lg:-mt-6 xl:-mt-8">
+    <div className="app-container pt-8 sm:pt-12 lg:pt-10 xl:pt-12">
+      <section className="grid gap-6 lg:gap-10 xl:grid-cols-[minmax(0,1.18fr)_minmax(320px,0.58fr)] xl:items-end xl:gap-20">
+        <div className="max-w-full xl:-mt-8">
           <div className="section-kicker">городская платформа обращений</div>
-          <h1 className="display-title mt-6 max-w-5xl">
-            Гражданский
+          <h1 className="hero-title mt-5 max-w-full sm:mt-6 xl:max-w-5xl">
+            <span className={["inline-block", heroShadow].join(" ")}>Гражданский</span>
             <br />
             <span
               className={[
                 "inline-block border-b pb-2 tracking-[0.02em] font-extrabold",
-                isLight
-                  ? "border-black/25 [text-shadow:8px_8px_0_rgba(0,0,0,0.10)]"
-                  : "border-white/35 [text-shadow:8px_8px_0_rgba(255,255,255,0.12)]",
+                heroShadow,
+                isLight ? "border-black/25" : "border-white/35",
               ].join(" ")}
             >
               контроль
@@ -34,7 +36,7 @@ export default function Home() {
           </h1>
         </div>
 
-        <div className="dark-panel w-full justify-self-end p-6 sm:p-8 lg:max-w-[390px] xl:max-w-[420px]">
+        <div className="dark-panel w-full p-5 sm:p-8 xl:justify-self-end xl:max-w-[390px] 2xl:max-w-[420px]">
           <p className="max-w-none text-sm leading-7 text-[color:var(--muted-fg)] sm:text-base">
             Подавайте обращения быстро и без лишних шагов: отметьте проблему на карте, добавьте фото,
             коротко опишите ситуацию и отправьте её в понятном городском формате.
@@ -45,7 +47,7 @@ export default function Home() {
                 Донести
               </Button>
             </Link>
-            <Link to="/incidents" className="mx-auto block w-full max-w-[220px]">
+            <Link to="/incidents" className="block w-full sm:mx-auto sm:max-w-[220px] lg:mx-0 lg:max-w-none">
               <Button variant="darkGhost" size="lg" className="w-full justify-center">
                 Все обращения
               </Button>
@@ -55,15 +57,15 @@ export default function Home() {
       </section>
 
       <section className="paper mt-10 overflow-hidden rounded-t-[2.25rem] border border-black/10 shadow-ink">
-        <div className="grid items-stretch gap-10 px-5 py-6 sm:px-8 sm:py-10 lg:grid-cols-[1.15fr_0.85fr] lg:px-10">
+        <div className="grid items-stretch gap-8 px-5 py-6 sm:px-8 sm:py-10 lg:grid-cols-[1.15fr_0.85fr] lg:px-10">
           <div className="flex h-full flex-col">
-            <div className="max-w-3xl border-b border-black/35 pb-4 text-lg leading-8 text-black/75 sm:text-[1.15rem]">
+            <div className="max-w-3xl border-b border-black/35 pb-4 text-base leading-8 text-black/75 sm:text-[1.15rem]">
               Сообщайте о нарушениях парковки, продаже просроченных товаров и других заметных
               городских проблемах. Формируйте обращение, прикладывайте фото и сохраняйте всю
               историю в одном месте.
             </div>
 
-            <div className="mt-10 grid flex-1 gap-4 sm:grid-cols-3 sm:auto-rows-fr">
+            <div className="mt-8 grid flex-1 gap-4 md:grid-cols-3 md:auto-rows-fr">
               {features.map((feature, index) => (
                 <div
                   key={feature}
@@ -96,7 +98,9 @@ export default function Home() {
             <span>Самара 2026</span>
             <span>incidents.info63@gmail.ru</span>
           </div>
-          <span>Design system by <Link to="/team" className="team-link relative inline-block">Team</Link> 1</span>
+          <span>
+            Design system by <Link to="/team" className="team-link relative inline-block">Team</Link> 1
+          </span>
         </div>
       </section>
     </div>

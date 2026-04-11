@@ -10,10 +10,10 @@ export default function Team() {
   const activeItem = useMemo(() => teamRecords[activeIndex] || teamRecords[0], [activeIndex]);
 
   return (
-    <div className="app-container pt-4 sm:pt-6">
+    <div className="app-container pt-3 sm:pt-6">
       <section
         className={[
-          "relative overflow-hidden rounded-[2.9rem] border px-4 py-6 shadow-[0_40px_120px_rgba(0,0,0,0.45)] sm:px-6 sm:py-8 lg:px-8",
+          "relative overflow-hidden rounded-[2.4rem] border px-4 py-5 shadow-[0_40px_120px_rgba(0,0,0,0.45)] sm:px-6 sm:py-8 lg:px-8",
           isLight
             ? "border-black/10 bg-[linear-gradient(180deg,rgba(250,248,242,0.985),rgba(233,229,219,0.98))]"
             : "border-white/10 bg-[linear-gradient(180deg,rgba(10,10,12,0.98),rgba(4,4,6,0.99))]",
@@ -47,17 +47,17 @@ export default function Team() {
           </button>
         </div>
 
-        <div className="relative mt-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative mt-6 flex flex-col gap-5 lg:mt-8 lg:flex-row lg:items-end lg:justify-between lg:gap-6">
           <div className="max-w-4xl">
             <div className={["section-kicker", isLight ? "text-black/55" : "text-white/55"].join(" ")}>
               team easter egg / creators
             </div>
-            <h1 className="mt-3 text-4xl font-extrabold uppercase leading-[0.9] tracking-[-0.03em] sm:text-6xl lg:text-[5rem]">
+            <h1 className="mt-3 text-[2.65rem] font-extrabold uppercase leading-[0.92] tracking-[-0.03em] sm:text-6xl lg:text-[5rem]">
               Наша команда
             </h1>
             <p
               className={[
-                "mt-5 max-w-2xl text-sm leading-7 sm:text-base",
+                "mt-4 max-w-2xl text-sm leading-7 sm:text-base",
                 isLight ? "text-black/68" : "text-white/58",
               ].join(" ")}
             >
@@ -68,18 +68,22 @@ export default function Team() {
 
           <div
             className={[
-              "self-start rounded-[1.6rem] border px-5 py-4 text-sm leading-6 lg:max-w-sm",
-              isLight ? "border-black/10 bg-white/65 text-black/72" : "border-white/10 bg-white/[0.04] text-white/68",
+              "w-full max-w-md self-start rounded-[1.6rem] border px-5 py-4 text-sm leading-6 lg:w-auto lg:max-w-sm",
+              isLight
+                ? "border-black/10 bg-white/65 text-black/72"
+                : "border-white/10 bg-white/[0.04] text-white/68",
             ].join(" ")}
           >
             <div className="text-xs font-semibold uppercase tracking-[0.28em]">В центре</div>
             <div className="mt-2 text-2xl font-extrabold leading-tight">{activeItem.name}</div>
-            <div className={["mt-1 font-medium", isLight ? "text-black/60" : "text-white/58"].join(" ")}>{activeItem.role}</div>
+            <div className={["mt-1 font-medium", isLight ? "text-black/60" : "text-white/58"].join(" ")}>
+              {activeItem.role}
+            </div>
           </div>
         </div>
 
-        <div className="mt-8">
-          <TeamCarousel items={teamRecords} activeIndex={activeIndex} onSelect={setActiveIndex} ariaLabel={activeItem?.role} />
+        <div className="mt-7 sm:mt-8">
+          <TeamCarousel items={teamRecords} activeIndex={activeIndex} onSelect={setActiveIndex} />
         </div>
       </section>
     </div>

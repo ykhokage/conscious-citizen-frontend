@@ -39,10 +39,17 @@ body,
   min-height: 100%;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   background: var(--theme-bg);
   color: var(--theme-fg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
@@ -116,6 +123,15 @@ img {
     @apply text-5xl font-extrabold uppercase leading-[0.92] tracking-[0.01em] sm:text-7xl lg:text-[5.8rem];
   }
 
+  .hero-title {
+    font-size: clamp(3.7rem, 8vw, 5.8rem);
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    max-width: 100%;
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+
   .paper-card {
     background: var(--paper-bg);
     color: var(--paper-fg);
@@ -136,19 +152,28 @@ img {
   }
 }
 
-
 @keyframes asylum-flicker {
-  0%, 18%, 22%, 63%, 100% { opacity: 0.85; }
-  20%, 21%, 61% { opacity: 0.55; }
+  0%,
+  18%,
+  22%,
+  63%,
+  100% {
+    opacity: 0.85;
+  }
+  20%,
+  21%,
+  61% {
+    opacity: 0.55;
+  }
 }
 
 .hospital-noise::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.12), transparent 24%),
-    radial-gradient(circle at 80% 16%, rgba(255,0,0,0.08), transparent 18%),
-    radial-gradient(circle at 50% 80%, rgba(255,255,255,0.04), transparent 28%);
+  background-image: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12), transparent 24%),
+    radial-gradient(circle at 80% 16%, rgba(255, 0, 0, 0.08), transparent 18%),
+    radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.04), transparent 28%);
   mix-blend-mode: screen;
   filter: blur(18px);
   animation: asylum-flicker 6.5s steps(1, end) infinite;
@@ -158,8 +183,8 @@ img {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 3px 3px, 4px 4px;
   opacity: 0.2;
   mix-blend-mode: overlay;
@@ -196,4 +221,52 @@ img {
   background-clip: text;
   color: transparent;
   animation: team-spectrum-spin 1.25s linear infinite;
+}
+
+.page-header-actions > * {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .page-header-actions > * {
+    width: auto;
+  }
+}
+
+@media (max-width: 1023px) {
+  .page-grid {
+    background-size: 32px 32px;
+  }
+
+  .hero-title {
+    font-size: clamp(3.55rem, 10vw, 4.85rem);
+  }
+}
+
+@media (max-width: 639px) {
+  .page-grid {
+    background-size: 24px 24px;
+  }
+
+  .display-title {
+    font-size: clamp(3.2rem, 15vw, 4.6rem);
+    line-height: 0.96;
+    letter-spacing: 0;
+  }
+
+  .section-kicker {
+    letter-spacing: 0.22em;
+  }
+
+  .hero-title {
+    font-size: clamp(2.55rem, 12vw, 3.9rem);
+    line-height: 0.95;
+    letter-spacing: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-title {
+    font-size: clamp(2.35rem, 11.4vw, 3.2rem);
+  }
 }
